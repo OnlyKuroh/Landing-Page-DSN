@@ -33,6 +33,52 @@ const PROJECT_1_FILES = [
   "CARD - REGULARIZAR IMOVEIS (25.09).png",
 ] as const;
 
+const PROJECT_2_FILES = [
+  "CARD 1 - GESTÃO PERSONALIZADA.png",
+  "CARD 10 - SISTEMA PROPRIO.png",
+  "CARD 11 - POWER BI.png",
+  "CARD 12 - CASOS DE SUCESSO.png",
+  "CARD 13 - DESIGN DE SISTEMA.png",
+  "CARD 14 - ACADEMIA.png",
+  "CARD 15 - SOLUÇÕES PEQUENAS.png",
+  "CARD 2 - AUTOMAÇÃO DE PROCESSOS.png",
+  "CARD 3 - GESTÃO EFICIENTE.png",
+  "CARD 4 - SISTEMA DE LÓGICA.png",
+  "CARD 5 - VAREJO.png",
+  "CARD 6 - ESTOQUE_.png",
+  "CARD 7 - EDUCAÇÃO.png",
+  "CARD 8 - CALENDARIO.png",
+  "CARD 9 - SEGURANÇA NA NUVEM.png",
+] as const;
+
+const PROJECT_3_FILES = [
+  "CARD - ACOMPANHADO DESDE O INICIO.png",
+  "CARD - APRENDA E COLOQUE.png",
+  "CARD - AREA TECH INCLUSIVA_.png",
+  "CARD - COMUNIDADE +.png",
+  "CARD - FUTURO DA SUA CARREIRA.png",
+  "CARD - MENTOR CERTO.png",
+  "CARD - MUDANDO DE CARREIRA.png",
+  "CARD - NETWORKING COM DEVS.png",
+  "CARD - NINGUÉM CRESCE SOZINHO.png",
+  "CARD - NOSSA MENTORIA.png",
+  "CARD - PODER DA MENTORIA.png",
+  "CARD - PQ GASTAR_.png",
+  "CARD - PRIMEIRO PASSO.png",
+  "CARD - PROGRAMAÇÃO DESCOMPLICADA.png",
+  "CARD - QUER SER DEV_.png",
+  "CARD - SE DESTAQUE NO MERCADO.png",
+  "CARD - TECNOLOGIA PRA TODOS.png",
+  "CARD - TECNOLOGIA.png",
+  "CARD - TRANSFORMA SUA CARREIRA.png",
+] as const;
+
+const FALLBACK_FILES_BY_FOLDER: Record<string, readonly string[]> = {
+  "projeto-1": PROJECT_1_FILES,
+  "projeto-2": PROJECT_2_FILES,
+  "projeto-3": PROJECT_3_FILES,
+};
+
 export function Portfolio() {
   const content = useSiteContent();
   const editableProjects = content.portfolio.projects;
@@ -42,8 +88,10 @@ export function Portfolio() {
       editableProjects.map((item) => ({
         ...item,
         images:
-          item.folder === "projeto-1"
-            ? PROJECT_1_FILES.map((fileName) => toImageUrl("projeto-1", fileName))
+          (FALLBACK_FILES_BY_FOLDER[item.folder]?.length ?? 0) > 0
+            ? FALLBACK_FILES_BY_FOLDER[item.folder].map((fileName) =>
+                toImageUrl(item.folder, fileName)
+              )
             : [
                 `/images/portfolio/${item.folder}/1.jpg`,
                 `/images/portfolio/${item.folder}/2.jpg`,
