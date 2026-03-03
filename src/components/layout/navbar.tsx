@@ -63,12 +63,18 @@ export function Navbar() {
         {/* Mobile Nav */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              aria-controls="mobile-nav-sheet"
+              aria-label="Abrir menu"
+            >
               <Menu className="h-5 w-5 text-bone" />
               <span className="sr-only">Abrir menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right">
+          <SheetContent id="mobile-nav-sheet" side="right">
             <div className="flex flex-col gap-6 mt-12">
               {NAV_LINKS.map((link) => (
                 <a

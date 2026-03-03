@@ -154,89 +154,119 @@ export function FloatingIconsGlobal() {
   );
 }
 
-/** Sparse floating icons — 2 subtle FAR-layer icons per variant */
+/** Sparse floating icons — denser set for inner sections (post-hero). */
 export function FloatingIconsSparse({ variant = 1 }: { variant?: number }) {
   const sets: Record<number, React.ReactNode> = {
     1: (
       <>
-        <div className="absolute top-[12%] right-[5%] animate-float-slow blur-distance-far" style={{ animationDelay: "0.5s" }}>
-          <div className="w-9 h-9 rounded-lg bg-[#31A8FF]/8 border border-[#31A8FF]/8 flex items-center justify-center">
+        <div className="absolute top-[12%] right-[5%] animate-float-slow blur-distance-mid" style={{ animationDelay: "0.5s" }}>
+          <div className="w-10 h-10 rounded-lg bg-[#31A8FF]/14 border border-[#31A8FF]/18 flex items-center justify-center">
             <span className="text-[#31A8FF] font-bold text-xs font-tusker">Ps</span>
           </div>
         </div>
-        <div className="absolute bottom-[15%] left-[3%] animate-float-medium blur-distance-far" style={{ animationDelay: "2s" }}>
-          <div className="w-8 h-8 rounded-md bg-[#A259FF]/8 border border-[#A259FF]/8 flex items-center justify-center">
+        <div className="absolute bottom-[15%] left-[3%] animate-float-medium blur-distance-mid" style={{ animationDelay: "2s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#A259FF]/14 border border-[#A259FF]/18 flex items-center justify-center">
             <span className="text-[#A259FF] font-bold text-[10px] font-tusker">Fg</span>
+          </div>
+        </div>
+        <div className="absolute top-[42%] right-[12%] animate-float-fast blur-distance-mid" style={{ animationDelay: "1.6s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#9999FF]/14 border border-[#9999FF]/18 flex items-center justify-center">
+            <span className="text-[#9999FF] font-bold text-[10px] font-tusker">Ae</span>
           </div>
         </div>
       </>
     ),
     2: (
       <>
-        <div className="absolute top-[18%] left-[4%] animate-float-medium blur-distance-far" style={{ animationDelay: "1s" }}>
-          <div className="w-8 h-8 rounded-md bg-[#FF9A00]/8 border border-[#FF9A00]/8 flex items-center justify-center">
-            <span className="text-[#FF9A00] font-bold text-[10px] font-tusker">Ai</span>
+        <div className="absolute top-[18%] left-[4%] animate-float-medium blur-distance-mid" style={{ animationDelay: "1s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#9999FF]/14 border border-[#9999FF]/18 flex items-center justify-center">
+            <span className="text-[#9999FF] font-bold text-[10px] font-tusker">Pr</span>
           </div>
         </div>
-        <div className="absolute bottom-[20%] right-[6%] animate-float-slow blur-distance-far" style={{ animationDelay: "3s" }}>
-          <div className="w-9 h-9 rounded-lg bg-[#D4A574]/8 border border-[#D4A574]/8 flex items-center justify-center">
+        <div className="absolute bottom-[20%] right-[6%] animate-float-slow blur-distance-mid" style={{ animationDelay: "3s" }}>
+          <div className="w-10 h-10 rounded-lg bg-[#D4A574]/14 border border-[#D4A574]/18 flex items-center justify-center">
             <span className="text-[#D4A574] font-bold text-xs font-tusker">Cl</span>
+          </div>
+        </div>
+        <div className="absolute top-[46%] left-[12%] animate-float-fast blur-distance-mid" style={{ animationDelay: "2.3s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#00C4CC]/14 border border-[#00C4CC]/18 flex items-center justify-center">
+            <span className="text-[#00C4CC] font-bold text-[10px] font-tusker">Gm</span>
           </div>
         </div>
       </>
     ),
     3: (
       <>
-        <div className="absolute top-[10%] right-[3%] animate-float-fast blur-distance-far" style={{ animationDelay: "0.8s" }}>
-          <div className="w-8 h-8 rounded-md bg-[#92003B]/8 border border-[#92003B]/8 flex items-center justify-center">
+        <div className="absolute top-[10%] right-[3%] animate-float-fast blur-distance-mid" style={{ animationDelay: "0.8s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#92003B]/14 border border-[#92003B]/18 flex items-center justify-center">
             <span className="text-[#FF6F6F] font-bold text-[10px] font-tusker">El</span>
           </div>
         </div>
-        <div className="absolute bottom-[10%] left-[5%] animate-float-slow blur-distance-far" style={{ animationDelay: "2.5s" }}>
-          <div className="w-7 h-7 rounded-md bg-[#9999FF]/8 border border-[#9999FF]/8 flex items-center justify-center">
+        <div className="absolute bottom-[10%] left-[5%] animate-float-slow blur-distance-mid" style={{ animationDelay: "2.5s" }}>
+          <div className="w-8 h-8 rounded-md bg-[#9999FF]/14 border border-[#9999FF]/18 flex items-center justify-center">
             <span className="text-[#9999FF] font-bold text-[9px] font-tusker">Ae</span>
+          </div>
+        </div>
+        <div className="absolute top-[40%] right-[10%] animate-float-medium blur-distance-mid" style={{ animationDelay: "1.7s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#00C4CC]/14 border border-[#00C4CC]/18 flex items-center justify-center">
+            <span className="text-[#00C4CC] font-bold text-[10px] font-tusker">Gm</span>
           </div>
         </div>
       </>
     ),
     4: (
       <>
-        <div className="absolute top-[15%] left-[6%] animate-float-medium blur-distance-far" style={{ animationDelay: "1.5s" }}>
-          <div className="w-9 h-9 rounded-lg bg-[#31A8FF]/8 border border-[#31A8FF]/8 flex items-center justify-center">
+        <div className="absolute top-[15%] left-[6%] animate-float-medium blur-distance-mid" style={{ animationDelay: "1.5s" }}>
+          <div className="w-10 h-10 rounded-lg bg-[#31A8FF]/14 border border-[#31A8FF]/18 flex items-center justify-center">
             <span className="text-[#31A8FF] font-bold text-xs font-tusker">Lr</span>
           </div>
         </div>
-        <div className="absolute bottom-[18%] right-[4%] animate-float-fast blur-distance-far" style={{ animationDelay: "3.5s" }}>
-          <div className="w-8 h-8 rounded-md bg-[#FF3366]/8 border border-[#FF3366]/8 flex items-center justify-center">
+        <div className="absolute bottom-[18%] right-[4%] animate-float-fast blur-distance-mid" style={{ animationDelay: "3.5s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#FF3366]/14 border border-[#FF3366]/18 flex items-center justify-center">
             <span className="text-[#FF3366] font-bold text-[10px] font-tusker">Id</span>
+          </div>
+        </div>
+        <div className="absolute top-[44%] left-[14%] animate-float-slow blur-distance-mid" style={{ animationDelay: "2.1s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#9999FF]/14 border border-[#9999FF]/18 flex items-center justify-center">
+            <span className="text-[#9999FF] font-bold text-[10px] font-tusker">Pr</span>
           </div>
         </div>
       </>
     ),
     5: (
       <>
-        <div className="absolute top-[8%] right-[4%] animate-float-slow blur-distance-far" style={{ animationDelay: "0.3s" }}>
-          <div className="w-8 h-8 rounded-md bg-[#A259FF]/8 border border-[#A259FF]/8 flex items-center justify-center">
+        <div className="absolute top-[8%] right-[4%] animate-float-slow blur-distance-mid" style={{ animationDelay: "0.3s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#A259FF]/14 border border-[#A259FF]/18 flex items-center justify-center">
             <span className="text-[#A259FF] font-bold text-[10px] font-tusker">Fg</span>
           </div>
         </div>
-        <div className="absolute bottom-[12%] left-[3%] animate-float-medium blur-distance-far" style={{ animationDelay: "2.2s" }}>
-          <div className="w-7 h-7 rounded-md bg-[#00C4CC]/8 border border-[#00C4CC]/8 flex items-center justify-center">
+        <div className="absolute bottom-[12%] left-[3%] animate-float-medium blur-distance-mid" style={{ animationDelay: "2.2s" }}>
+          <div className="w-8 h-8 rounded-md bg-[#00C4CC]/14 border border-[#00C4CC]/18 flex items-center justify-center">
             <span className="text-[#00C4CC] font-bold text-[9px] font-tusker">Cv</span>
+          </div>
+        </div>
+        <div className="absolute top-[46%] right-[10%] animate-float-fast blur-distance-mid" style={{ animationDelay: "1.6s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#D4A574]/14 border border-[#D4A574]/18 flex items-center justify-center">
+            <span className="text-[#D4A574] font-bold text-[10px] font-tusker">Cl</span>
           </div>
         </div>
       </>
     ),
     6: (
       <>
-        <div className="absolute top-[12%] left-[5%] animate-float-fast blur-distance-far" style={{ animationDelay: "1.8s" }}>
-          <div className="w-8 h-8 rounded-md bg-[#9999FF]/8 border border-[#9999FF]/8 flex items-center justify-center">
+        <div className="absolute top-[12%] left-[5%] animate-float-fast blur-distance-mid" style={{ animationDelay: "1.8s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#9999FF]/14 border border-[#9999FF]/18 flex items-center justify-center">
             <span className="text-[#9999FF] font-bold text-[10px] font-tusker">Pr</span>
           </div>
         </div>
-        <div className="absolute bottom-[15%] right-[5%] animate-float-slow blur-distance-far" style={{ animationDelay: "4s" }}>
-          <div className="w-9 h-9 rounded-lg bg-[#31A8FF]/8 border border-[#31A8FF]/8 flex items-center justify-center">
+        <div className="absolute bottom-[15%] right-[5%] animate-float-slow blur-distance-mid" style={{ animationDelay: "4s" }}>
+          <div className="w-10 h-10 rounded-lg bg-[#31A8FF]/14 border border-[#31A8FF]/18 flex items-center justify-center">
             <span className="text-[#31A8FF] font-bold text-xs font-tusker">Ps</span>
+          </div>
+        </div>
+        <div className="absolute top-[42%] left-[12%] animate-float-medium blur-distance-mid" style={{ animationDelay: "2.4s" }}>
+          <div className="w-9 h-9 rounded-md bg-[#00C4CC]/14 border border-[#00C4CC]/18 flex items-center justify-center">
+            <span className="text-[#00C4CC] font-bold text-[10px] font-tusker">Gm</span>
           </div>
         </div>
       </>

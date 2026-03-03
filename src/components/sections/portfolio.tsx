@@ -262,7 +262,7 @@ export function Portfolio() {
                 {/* Content overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                   <Badge className="mb-2 text-[10px]">{item.category}</Badge>
-                  <h3 className="text-[28px] leading-[0.95] font-poppins font-bold uppercase text-bone">
+                  <h3 className="text-[13px] sm:text-[14px] leading-[0.95] font-poppins font-bold uppercase text-bone">
                     {item.title}
                   </h3>
                 </div>
