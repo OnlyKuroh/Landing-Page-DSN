@@ -24,21 +24,11 @@ type ResolvedPortrait = {
   src: string;
   label: string;
   client: boolean;
-  width: number;
-  height: number;
   kind: FormatKind;
 };
 
 const FORMAT_ORDER: FormatKind[] = ["portrait-4x5", "square", "other"];
 const PAGE_SIZE = 4;
-
-function classifyFormat(width: number, height: number): FormatKind {
-  if (!width || !height) return "other";
-  const ratio = width / height;
-  if (Math.abs(ratio - 0.8) <= 0.03) return "portrait-4x5";
-  if (Math.abs(ratio - 1) <= 0.03) return "square";
-  return "other";
-}
 
 function getGridClass(count: number, kind: FormatKind): string {
   if (count <= 1) return "grid-cols-1 max-w-sm mx-auto";
@@ -62,13 +52,10 @@ function getGridClass(count: number, kind: FormatKind): string {
 export function AiPortraits() {
   const [page, setPage] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
-  const [portraits, setPortraits] = useState(FALLBACK_AI_PORTRAITS);
   const [resolvedItems, setResolvedItems] = useState<ResolvedPortrait[]>(
     FALLBACK_AI_PORTRAITS.map((item) => ({
       ...item,
-      width: 0,
-      height: 0,
-      kind: "other" as FormatKind,
+      kind: "portrait-4x5" as FormatKind,
     }))
   );
 
@@ -82,11 +69,16 @@ export function AiPortraits() {
         const images = data.images ?? [];
 
         if (!cancelled && images.length > 0) {
-          setPortraits(
-            images.map((src, index) => ({
-              src,
-              label: `Ensaio IA ${String(index + 1).padStart(2, "0")}`,
-              client: true,
+          const nextPortraits = images.map((src, index) => ({
+            src,
+            label: `Ensaio IA ${String(index + 1).padStart(2, "0")}`,
+            client: true,
+          }));
+
+          setResolvedItems(
+            nextPortraits.map((item) => ({
+              ...item,
+              kind: "portrait-4x5" as FormatKind,
             }))
           );
         }
@@ -101,37 +93,6 @@ export function AiPortraits() {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const resolveOne = (item: (typeof portraits)[number]) =>
-      new Promise<ResolvedPortrait>((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const width = img.naturalWidth;
-          const height = img.naturalHeight;
-          resolve({
-            ...item,
-            width,
-            height,
-            kind: classifyFormat(width, height),
-          });
-        };
-        img.onerror = () => {
-          resolve({ ...item, width: 0, height: 0, kind: "other" });
-        };
-        img.src = item.src;
-      });
-
-    Promise.all(portraits.map(resolveOne)).then((result) => {
-      if (!cancelled) setResolvedItems(result);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [portraits]);
 
   const pages = useMemo(() => {
     const ordered = FORMAT_ORDER.flatMap((kind) =>
@@ -232,6 +193,8 @@ export function AiPortraits() {
                   src={item.src}
                   alt={item.label}
                   className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     const attemptedFallback = target.dataset.extFallback === "1";

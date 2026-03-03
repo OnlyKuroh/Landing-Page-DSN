@@ -111,9 +111,6 @@ export function Portfolio() {
   const [coverImages, setCoverImages] = useState<string[]>(
     projectGalleries.map((project) => project.images[0])
   );
-  const [coverZoom, setCoverZoom] = useState<number[]>(
-    projectGalleries.map(() => 1)
-  );
 
   useEffect(() => {
     let cancelled = false;
@@ -165,37 +162,6 @@ export function Portfolio() {
       })
     );
   }, [galleriesWithRealImages]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const resolveZoom = (src: string) =>
-      new Promise<number>((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const ratio = img.naturalWidth / img.naturalHeight;
-          if (Math.abs(ratio - 1) <= 0.03) {
-            resolve(1.12);
-            return;
-          }
-          if (ratio > 1) {
-            resolve(1.2);
-            return;
-          }
-          resolve(1.02);
-        };
-        img.onerror = () => resolve(1.04);
-        img.src = src;
-      });
-
-    Promise.all(coverImages.map(resolveZoom)).then((zooms) => {
-      if (!cancelled) setCoverZoom(zooms);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [coverImages]);
 
   const activeProject =
     activeProjectIndex !== null ? galleriesWithRealImages[activeProjectIndex] : null;
@@ -252,7 +218,16 @@ export function Portfolio() {
                   src={coverImages[index]}
                   alt={`Capa do projeto ${item.title}`}
                   className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700"
-                  style={{ transform: `scale(${coverZoom[index] ?? 1.04})` }}
+                  style={{ transform: "scale(1.06)" }}
+                  loading="lazy"
+                  decoding="async"
+                  onLoad={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.removeProperty("display");
+                    target.parentElement
+                      ?.querySelector<HTMLDivElement>(".cover-placeholder")
+                      ?.style.setProperty("display", "none");
+                  }}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = "none";
@@ -352,6 +327,8 @@ export function Portfolio() {
                       src={image}
                       alt={`${activeProject.title} imagem ${imageIndex + 1}`}
                       className="absolute inset-0 w-full h-full object-contain bg-obsidian p-1"
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
