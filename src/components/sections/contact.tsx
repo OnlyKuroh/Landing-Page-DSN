@@ -29,9 +29,9 @@ export function Contact() {
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 max-w-6xl mx-auto items-start">
           {/* Form */}
-          <AnimatedSection className="lg:col-span-3" direction="left">
+          <AnimatedSection className="lg:col-span-8" direction="left">
             <Card className="bg-navy/30 border-border">
               <CardContent className="p-6 sm:p-8">
                 <LeadForm />
@@ -40,14 +40,14 @@ export function Contact() {
           </AnimatedSection>
 
           {/* Side info */}
-          <AnimatedSection className="lg:col-span-2 space-y-8" direction="right">
+          <AnimatedSection className="lg:col-span-4 lg:max-w-sm lg:justify-self-end lg:self-start space-y-6" direction="right">
             <div className="relative">
               <HummingNote noteId="contact-main" fallbackText={"bora conversar"} />
             </div>
 
             {/* Quick WhatsApp */}
             <Card className="bg-navy/30 border-border">
-              <CardContent className="p-6 sm:p-8 space-y-4">
+              <CardContent className="p-5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-[#25D366]/20 flex items-center justify-center">
                     <MessageCircle className="h-5 w-5 text-[#25D366]" />
@@ -76,7 +76,7 @@ export function Contact() {
 
             {/* Info cards */}
             <Card className="bg-navy/30 border-border">
-              <CardContent className="p-6 sm:p-8 space-y-6">
+              <CardContent className="p-5 sm:p-6 space-y-5">
                 <div>
                   <p className="text-sm text-bone/50 mb-1">Localização</p>
                   <p className="text-bone font-medium">Goiânia, GO — Brasil</p>

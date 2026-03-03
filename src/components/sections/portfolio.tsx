@@ -92,19 +92,21 @@ export function Portfolio() {
             ? FALLBACK_FILES_BY_FOLDER[item.folder].map((fileName) =>
                 toImageUrl(item.folder, fileName)
               )
+                .map((url) => url.replace(/\.(png|jpe?g)$/i, ".webp"))
             : [
-                `/images/portfolio/${item.folder}/1.jpg`,
-                `/images/portfolio/${item.folder}/2.jpg`,
-                `/images/portfolio/${item.folder}/3.jpg`,
-                `/images/portfolio/${item.folder}/4.jpg`,
-                `/images/portfolio/${item.folder}/5.jpg`,
-                `/images/portfolio/${item.folder}/6.jpg`,
+                `/images/portfolio/${item.folder}/1.webp`,
+                `/images/portfolio/${item.folder}/2.webp`,
+                `/images/portfolio/${item.folder}/3.webp`,
+                `/images/portfolio/${item.folder}/4.webp`,
+                `/images/portfolio/${item.folder}/5.webp`,
+                `/images/portfolio/${item.folder}/6.webp`,
               ],
       })),
     [editableProjects]
   );
 
   const [activeProjectIndex, setActiveProjectIndex] = useState<number | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
   const [folderImages, setFolderImages] = useState<Record<string, string[]>>({});
   const [coverImages, setCoverImages] = useState<string[]>(
     projectGalleries.map((project) => project.images[0])
@@ -198,9 +200,22 @@ export function Portfolio() {
   const activeProject =
     activeProjectIndex !== null ? galleriesWithRealImages[activeProjectIndex] : null;
 
+  const activeProjectImages = activeProject?.images ?? [];
+
   const goToNextProject = () => {
     if (activeProjectIndex === null) return;
+    setActiveImageIndex(null);
     setActiveProjectIndex((activeProjectIndex + 1) % galleriesWithRealImages.length);
+  };
+
+  const goToNextImage = () => {
+    if (activeImageIndex === null || activeProjectImages.length === 0) return;
+    setActiveImageIndex((activeImageIndex + 1) % activeProjectImages.length);
+  };
+
+  const goToPreviousImage = () => {
+    if (activeImageIndex === null || activeProjectImages.length === 0) return;
+    setActiveImageIndex((activeImageIndex - 1 + activeProjectImages.length) % activeProjectImages.length);
   };
 
   return (
@@ -295,7 +310,10 @@ export function Portfolio() {
       {activeProject && (
         <div
           className="fixed inset-0 z-[80] bg-black/55 backdrop-blur-md p-4 sm:p-6 lg:p-10"
-          onClick={() => setActiveProjectIndex(null)}
+          onClick={() => {
+            setActiveImageIndex(null);
+            setActiveProjectIndex(null);
+          }}
         >
           <div
             className="relative mx-auto mt-2 sm:mt-6 w-full max-w-6xl max-h-[88vh] rounded-2xl border border-border bg-obsidian/95 overflow-hidden shadow-2xl shadow-black/50"
@@ -324,7 +342,12 @@ export function Portfolio() {
             <div className="max-h-[calc(88vh-86px)] overflow-y-auto p-4 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {activeProject.images.map((image, imageIndex) => (
-                  <div key={image} className="relative aspect-[4/5] rounded-xl overflow-hidden border border-border">
+                  <button
+                    key={image}
+                    type="button"
+                    onClick={() => setActiveImageIndex(imageIndex)}
+                    className="relative w-full aspect-[4/5] rounded-xl overflow-hidden border border-border cursor-zoom-in"
+                  >
                     <img
                       src={image}
                       alt={`${activeProject.title} imagem ${imageIndex + 1}`}
@@ -345,11 +368,59 @@ export function Portfolio() {
                     >
                       <ImageIcon className="h-9 w-9 text-bone/30" strokeWidth={1} />
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
+
+          {activeImageIndex !== null && activeProjectImages.length > 0 && (
+            <div
+              className="fixed inset-0 z-[90] bg-black/85 backdrop-blur-md p-4 sm:p-6"
+              onClick={() => setActiveImageIndex(null)}
+            >
+              <div
+                className="relative mx-auto flex h-full w-full max-w-6xl items-center justify-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={activeProjectImages[activeImageIndex]}
+                  alt={`${activeProject.title} ampliada ${activeImageIndex + 1}`}
+                  className="max-h-[88vh] w-auto max-w-full rounded-xl border border-border object-contain bg-obsidian/90"
+                />
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="absolute left-2 sm:left-6"
+                  onClick={goToPreviousImage}
+                >
+                  <ChevronRight className="h-5 w-5 rotate-180" />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="absolute right-2 sm:right-6"
+                  onClick={goToNextImage}
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="absolute top-2 right-2 sm:top-4 sm:right-4"
+                  onClick={() => setActiveImageIndex(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </section>

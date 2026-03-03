@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Sparkles, Image as ImageIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Image as ImageIcon, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,8 +14,8 @@ import { HummingNote } from "@/components/ui/humming-note";
 import { WHATSAPP } from "@/lib/constants";
 
 const FALLBACK_AI_PORTRAITS = [
-  { src: "/images/ai-portraits/freepik__candid-lifestyle-indoor-shot-of-a-young-man-with-s__57278.png", label: "Ensaio IA 01", client: true },
-  { src: "/images/ai-portraits/freepik__candid-lifestyle-indoor-shot-of-a-young-man-with-s__57279.png", label: "Ensaio IA 02", client: true },
+  { src: "/images/ai-portraits/freepik__candid-lifestyle-indoor-shot-of-a-young-man-with-s__57278.webp", label: "Ensaio IA 01", client: true },
+  { src: "/images/ai-portraits/freepik__candid-lifestyle-indoor-shot-of-a-young-man-with-s__57279.webp", label: "Ensaio IA 02", client: true },
 ];
 
 type FormatKind = "portrait-4x5" | "square" | "other";
@@ -61,6 +61,7 @@ function getGridClass(count: number, kind: FormatKind): string {
 
 export function AiPortraits() {
   const [page, setPage] = useState(0);
+  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
   const [portraits, setPortraits] = useState(FALLBACK_AI_PORTRAITS);
   const [resolvedItems, setResolvedItems] = useState<ResolvedPortrait[]>(
     FALLBACK_AI_PORTRAITS.map((item) => ({
@@ -182,6 +183,16 @@ export function AiPortraits() {
     "Olá, Athila! Vi os ensaios de IA no seu site e quero fazer o meu! Pode me contar mais?"
   )}`;
 
+  const goToNextImage = () => {
+    if (activeImageIndex === null || visibleItems.length === 0) return;
+    setActiveImageIndex((activeImageIndex + 1) % visibleItems.length);
+  };
+
+  const goToPreviousImage = () => {
+    if (activeImageIndex === null || visibleItems.length === 0) return;
+    setActiveImageIndex((activeImageIndex - 1 + visibleItems.length) % visibleItems.length);
+  };
+
   return (
     <section id="ensaios-ia" className="relative py-24 lg:py-32 gradient-section overflow-hidden">
       <FloatingIconsSparse variant={4} />
@@ -211,8 +222,10 @@ export function AiPortraits() {
         <StaggerContainer key={`ensaios-page-${page}`} className={`grid ${gridClass} gap-3 sm:gap-4`}>
           {visibleItems.map((item, index) => (
             <div key={item.src}>
-              <div
-                className={`group hover-lift-soft relative rounded-xl overflow-hidden border border-border hover:border-cognac/40 transition-all duration-500 cursor-pointer ${aspectClass}`}
+              <button
+                type="button"
+                onClick={() => setActiveImageIndex(index)}
+                className={`group hover-lift-soft relative w-full rounded-xl overflow-hidden border border-border hover:border-cognac/40 transition-all duration-500 cursor-pointer ${aspectClass}`}
               >
                 {/* Image */}
                 <img
@@ -220,10 +233,25 @@ export function AiPortraits() {
                   alt={item.label}
                   className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                   onError={(e) => {
-                    // Fallback gradient if image doesn't exist yet
                     const target = e.target as HTMLImageElement;
+                    const attemptedFallback = target.dataset.extFallback === "1";
+
+                    if (!attemptedFallback) {
+                      if (target.src.endsWith(".webp")) {
+                        target.dataset.extFallback = "1";
+                        target.src = target.src.replace(/\.webp$/i, ".png");
+                        return;
+                      }
+
+                      if (target.src.endsWith(".png")) {
+                        target.dataset.extFallback = "1";
+                        target.src = target.src.replace(/\.png$/i, ".webp");
+                        return;
+                      }
+                    }
+
                     target.style.display = "none";
-                    target.parentElement!.querySelector<HTMLDivElement>(".placeholder")!.style.display = "flex";
+                    target.parentElement?.querySelector<HTMLDivElement>(".placeholder")?.style.setProperty("display", "flex");
                   }}
                 />
 
@@ -255,10 +283,58 @@ export function AiPortraits() {
                     <Sparkles className="h-3 w-3 text-cognac" />
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           ))}
         </StaggerContainer>
+
+        {activeImageIndex !== null && visibleItems.length > 0 && (
+          <div
+            className="fixed inset-0 z-[90] bg-black/85 backdrop-blur-md p-4 sm:p-6"
+            onClick={() => setActiveImageIndex(null)}
+          >
+            <div
+              className="relative mx-auto flex h-full w-full max-w-6xl items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={visibleItems[activeImageIndex].src}
+                alt={`${visibleItems[activeImageIndex].label} ampliada`}
+                className="max-h-[88vh] w-auto max-w-full rounded-xl border border-border object-contain bg-obsidian/90"
+              />
+
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="absolute left-2 sm:left-6"
+                onClick={goToPreviousImage}
+              >
+                <ChevronRight className="h-5 w-5 rotate-180" />
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="absolute right-2 sm:right-6"
+                onClick={goToNextImage}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="absolute top-2 right-2 sm:top-4 sm:right-4"
+                onClick={() => setActiveImageIndex(null)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Navegação por formato */}
         <AnimatedSection className="mt-8 flex items-center justify-center gap-3">
