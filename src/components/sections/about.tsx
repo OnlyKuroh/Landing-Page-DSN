@@ -137,7 +137,7 @@ export function About() {
 
             <AnimatedSection delay={0.4}>
               <div className="pt-4">
-                <p className="text-lg font-tusker uppercase text-bone">
+                <p className="text-lg font-poppins font-bold uppercase text-bone">
                   Athila <span className="text-cognac">Cabrall</span>
                 </p>
                 <p className="text-sm text-bone/40 font-poppins">

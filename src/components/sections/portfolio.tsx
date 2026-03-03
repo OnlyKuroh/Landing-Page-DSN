@@ -262,7 +262,7 @@ export function Portfolio() {
                 {/* Content overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                   <Badge className="mb-2 text-[10px]">{item.category}</Badge>
-                  <h3 className="text-[28px] leading-[0.95] font-tusker uppercase text-bone">
+                  <h3 className="text-[28px] leading-[0.95] font-poppins font-bold uppercase text-bone">
                     {item.title}
                   </h3>
                 </div>
@@ -304,7 +304,7 @@ export function Portfolio() {
             <div className="flex items-center justify-between border-b border-border px-4 sm:px-6 py-4">
               <div>
                 <p className="text-xs uppercase tracking-widest text-cognac font-poppins">Projeto aberto</p>
-                <h3 className="font-tusker uppercase text-bone text-xl sm:text-2xl">
+                <h3 className="font-poppins font-bold uppercase text-bone text-xl sm:text-2xl">
                   {activeProject.title}
                 </h3>
                 <p className="text-bone/55 font-poppins text-sm">{activeProject.category}</p>

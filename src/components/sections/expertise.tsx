@@ -57,7 +57,7 @@ export function Expertise() {
                         />
                       </div>
                       <div>
-                        <CardTitle className="text-lg sm:text-xl font-tusker uppercase tracking-wide">
+                        <CardTitle className="text-lg sm:text-xl font-poppins font-bold uppercase tracking-wide">
                           {service.title}
                         </CardTitle>
                       </div>

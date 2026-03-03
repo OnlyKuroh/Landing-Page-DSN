@@ -115,7 +115,7 @@ export function Mentorship() {
                       <Icon className="h-6 w-6 text-cognac" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <h3 className="font-tusker text-lg sm:text-xl uppercase text-bone tracking-wide">
+                      <h3 className="font-poppins font-bold text-lg sm:text-xl uppercase text-bone tracking-wide">
                         {benefit.title}
                       </h3>
                       <p className="mt-2 text-bone/50 font-poppins font-light leading-relaxed text-sm sm:text-base">
@@ -158,7 +158,7 @@ export function Mentorship() {
                   <p className="font-poppins font-bold text-2xl sm:text-3xl text-bone">
                     Transforme seu design
                   </p>
-                  <p className="font-tusker text-2xl sm:text-3xl uppercase text-cognac mt-1">
+                  <p className="font-poppins font-bold text-2xl sm:text-3xl uppercase text-cognac mt-1">
                     Em ferramenta de vendas
                   </p>
                 </div>

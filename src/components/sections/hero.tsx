@@ -164,12 +164,12 @@ export function Hero() {
 
               {/* Floating decorative badge */}
               <div className="absolute -bottom-3 -left-2 sm:-left-4 bg-navy border border-border rounded-xl p-3 sm:p-4 glow-cognac">
-                <p className="text-2xl font-tusker text-cognac">132+</p>
+                <p className="text-2xl font-poppins font-bold text-cognac">132+</p>
                 <p className="text-xs text-bone/60 font-poppins">Clientes</p>
               </div>
 
               <div className="absolute -top-3 -right-2 sm:-right-4 bg-navy border border-border rounded-xl p-3 sm:p-4 glow-cognac">
-                <p className="text-2xl font-tusker text-cognac">6+</p>
+                <p className="text-2xl font-poppins font-bold text-cognac">6+</p>
                 <p className="text-xs text-bone/60 font-poppins">Anos</p>
               </div>
             </div>
