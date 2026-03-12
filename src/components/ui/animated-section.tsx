@@ -7,15 +7,19 @@ interface AnimatedSectionProps {
   children: ReactNode;
   className?: string;
   delay?: number;
-  direction?: "up" | "down" | "left" | "right";
+  direction?: "up" | "down" | "left" | "right" | "scale" | "blur";
 }
 
 const directionOffsets = {
-  up: { y: 30, x: 0 },
-  down: { y: -30, x: 0 },
-  left: { x: 30, y: 0 },
-  right: { x: -30, y: 0 },
+  up: { y: 40, x: 0, scale: 1, filter: "blur(0px)" },
+  down: { y: -40, x: 0, scale: 1, filter: "blur(0px)" },
+  left: { x: 40, y: 0, scale: 1, filter: "blur(0px)" },
+  right: { x: -40, y: 0, scale: 1, filter: "blur(0px)" },
+  scale: { y: 0, x: 0, scale: 0.92, filter: "blur(0px)" },
+  blur: { y: 20, x: 0, scale: 1, filter: "blur(8px)" },
 };
+
+const endState = { opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" };
 
 export function AnimatedSection({
   children,
@@ -34,12 +38,12 @@ export function AnimatedSection({
     <motion.div
       className={className}
       initial={{ opacity: 0, ...offset }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
+      whileInView={endState}
+      viewport={{ once: true, amount: 0.15 }}
       transition={{
-        duration: 0.6,
+        duration: 0.7,
         delay,
-        ease: [0.25, 0.4, 0.25, 1],
+        ease: [0.22, 0.68, 0.35, 1.0],
       }}
     >
       {children}
@@ -69,7 +73,7 @@ export function StaggerContainer({
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.1 }}
       variants={{
         hidden: {},
         visible: {
@@ -95,11 +99,12 @@ export function StaggerItem({
     <motion.div
       className={className}
       variants={{
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.5, ease: [0.25, 0.4, 0.25, 1] },
+          filter: "blur(0px)",
+          transition: { duration: 0.6, ease: [0.22, 0.68, 0.35, 1.0] },
         },
       }}
     >

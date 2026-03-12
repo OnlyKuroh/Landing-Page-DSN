@@ -1,405 +1,365 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { ChevronRight, ExternalLink, Image as ImageIcon, X } from "lucide-react";
+import { useState, useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  X,
+  Image as ImageIcon,
+} from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  AnimatedSection,
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/ui/animated-section";
-import { SOCIAL } from "@/lib/constants";
-import { FloatingIconsSparse } from "@/components/ui/floating-icons";
-import { useSiteContent } from "@/hooks/use-site-content";
-import { HummingNote } from "@/components/ui/humming-note";
+import { AnimatedSection } from "@/components/ui/animated-section";
+import { PORTFOLIO_PROJECTS, SOCIAL } from "@/lib/constants";
 
-const toImageUrl = (folder: string, fileName: string) =>
-  `/images/portfolio/${folder}/${encodeURIComponent(fileName)}`;
-
-const PROJECT_1_FILES = [
-  "CARD - BENS BLOQUEADOS (18.09).png",
-  "CARD - DIREITO MEDICO  (02.09).png",
-  "CARD - ERRO MEDICO (27.09).png",
-  "CARD - EXECUÇÃO FISCAL (11.09).png",
-  "CARD - FUNDO MEZANINO (30.09).png",
-  "CARD - INCOR. IMOBILIARIA (09.09).png",
-  "CARD - INVENTARIO RURAL (20.09).png",
-  "CARD - NF ELETRONICA (23.09).png",
-  "CARD - NOTICIA (06.09).png",
-  "CARD - PROCEDIMENTOS DERMA. (13.09).png",
-  "CARD - QUEBRA DE SAFRA (04.09).png",
-  "CARD - REDUZIR CARGA (19.09).png",
-  "CARD - REGULARIZAR IMOVEIS (25.09).png",
-] as const;
-
-const PROJECT_2_FILES = [
-  "CARD 1 - GESTÃO PERSONALIZADA.png",
-  "CARD 10 - SISTEMA PROPRIO.png",
-  "CARD 11 - POWER BI.png",
-  "CARD 12 - CASOS DE SUCESSO.png",
-  "CARD 13 - DESIGN DE SISTEMA.png",
-  "CARD 14 - ACADEMIA.png",
-  "CARD 15 - SOLUÇÕES PEQUENAS.png",
-  "CARD 2 - AUTOMAÇÃO DE PROCESSOS.png",
-  "CARD 3 - GESTÃO EFICIENTE.png",
-  "CARD 4 - SISTEMA DE LÓGICA.png",
-  "CARD 5 - VAREJO.png",
-  "CARD 6 - ESTOQUE_.png",
-  "CARD 7 - EDUCAÇÃO.png",
-  "CARD 8 - CALENDARIO.png",
-  "CARD 9 - SEGURANÇA NA NUVEM.png",
-] as const;
-
-const PROJECT_3_FILES = [
-  "CARD - ACOMPANHADO DESDE O INICIO.png",
-  "CARD - APRENDA E COLOQUE.png",
-  "CARD - AREA TECH INCLUSIVA_.png",
-  "CARD - COMUNIDADE +.png",
-  "CARD - FUTURO DA SUA CARREIRA.png",
-  "CARD - MENTOR CERTO.png",
-  "CARD - MUDANDO DE CARREIRA.png",
-  "CARD - NETWORKING COM DEVS.png",
-  "CARD - NINGUÉM CRESCE SOZINHO.png",
-  "CARD - NOSSA MENTORIA.png",
-  "CARD - PODER DA MENTORIA.png",
-  "CARD - PQ GASTAR_.png",
-  "CARD - PRIMEIRO PASSO.png",
-  "CARD - PROGRAMAÇÃO DESCOMPLICADA.png",
-  "CARD - QUER SER DEV_.png",
-  "CARD - SE DESTAQUE NO MERCADO.png",
-  "CARD - TECNOLOGIA PRA TODOS.png",
-  "CARD - TECNOLOGIA.png",
-  "CARD - TRANSFORMA SUA CARREIRA.png",
-] as const;
-
-const FALLBACK_FILES_BY_FOLDER: Record<string, readonly string[]> = {
-  "projeto-1": PROJECT_1_FILES,
-  "projeto-2": PROJECT_2_FILES,
-  "projeto-3": PROJECT_3_FILES,
+const PROJECT_FILES: Record<string, string[]> = {
+  "projeto-1": [
+    "CARD - BENS BLOQUEADOS (18.09).webp",
+    "CARD - DIREITO MEDICO  (02.09).webp",
+    "CARD - ERRO MEDICO (27.09).webp",
+    "CARD - EXECUÇÃO FISCAL (11.09).webp",
+    "CARD - FUNDO MEZANINO (30.09).webp",
+    "CARD - INCOR. IMOBILIARIA (09.09).webp",
+    "CARD - INVENTARIO RURAL (20.09).webp",
+    "CARD - NF ELETRONICA (23.09).webp",
+    "CARD - NOTICIA (06.09).webp",
+    "CARD - PROCEDIMENTOS DERMA. (13.09).webp",
+    "CARD - QUEBRA DE SAFRA (04.09).webp",
+    "CARD - REDUZIR CARGA (19.09).webp",
+    "CARD - REGULARIZAR IMOVEIS (25.09).webp",
+  ],
+  "projeto-2": [
+    "CARD 1 - GESTÃO PERSONALIZADA.webp",
+    "CARD 10 - SISTEMA PROPRIO.webp",
+    "CARD 11 - POWER BI.webp",
+    "CARD 12 - CASOS DE SUCESSO.webp",
+    "CARD 13 - DESIGN DE SISTEMA.webp",
+    "CARD 14 - ACADEMIA.webp",
+    "CARD 15 - SOLUÇÕES PEQUENAS.webp",
+    "CARD 2 - AUTOMAÇÃO DE PROCESSOS.webp",
+    "CARD 3 - GESTÃO EFICIENTE.webp",
+    "CARD 4 - SISTEMA DE LÓGICA.webp",
+    "CARD 5 - VAREJO.webp",
+    "CARD 6 - ESTOQUE_.webp",
+    "CARD 7 - EDUCAÇÃO.webp",
+    "CARD 8 - CALENDARIO.webp",
+    "CARD 9 - SEGURANÇA NA NUVEM.webp",
+  ],
+  "projeto-3": [
+    "CARD - ACOMPANHADO DESDE O INICIO.webp",
+    "CARD - APRENDA E COLOQUE.webp",
+    "CARD - AREA TECH INCLUSIVA_.webp",
+    "CARD - COMUNIDADE +.webp",
+    "CARD - FUTURO DA SUA CARREIRA.webp",
+    "CARD - MENTOR CERTO.webp",
+    "CARD - MUDANDO DE CARREIRA.webp",
+    "CARD - NETWORKING COM DEVS.webp",
+    "CARD - NINGUÉM CRESCE SOZINHO.webp",
+    "CARD - NOSSA MENTORIA.webp",
+    "CARD - PODER DA MENTORIA.webp",
+    "CARD - PQ GASTAR_.webp",
+    "CARD - PRIMEIRO PASSO.webp",
+    "CARD - PROGRAMAÇÃO DESCOMPLICADA.webp",
+    "CARD - QUER SER DEV_.webp",
+    "CARD - SE DESTAQUE NO MERCADO.webp",
+    "CARD - TECNOLOGIA PRA TODOS.webp",
+    "CARD - TECNOLOGIA.webp",
+    "CARD - TRANSFORMA SUA CARREIRA.webp",
+  ],
+  "projeto-4": [
+    "CARD - 1 CARTA.webp",
+    "CARD - 1 CARTAS.webp",
+    "CARD - 2 CARTA.webp",
+    "CARD - 3 CARTAS.webp",
+    "CARD - ARIES E TOURO.webp",
+    "CARD - DESCUBRA O AMOR.webp",
+    "CARD - O LOUCO.webp",
+    "CARD - SEGREDOS DOS TAROS.webp",
+    "CARD - TAROT E PROSPERIDADE.webp",
+  ],
+  "projeto-5": [
+    "FEED - AGILIDADE.webp",
+    "FEED - AGRICOLA.webp",
+    "FEED - DIA DAS ARTES.webp",
+    "FEED - DIA DO CLIENTE.webp",
+    "FEED - DIA DO TRANSITO.webp",
+    "FEED - EVENTO TRAGICO.webp",
+    "FEED - GUIA PRATICO.webp",
+    "FEED - IR E VIR.webp",
+    "FEED - MOMENTO DE AGIR.webp",
+    "FEED - NAO PRECISA.webp",
+    "FEED - PATRIMONIO.webp",
+    "FEED - SEGURO AGRICULTURA.webp",
+    "FEED - SEGURO CONDOMINIO.webp",
+    "FEED - SEGURO MOTO.webp",
+    "FEED - SEGURO RESIDENCIAL.webp",
+    "FEED - SEU LAR SEGURO.webp",
+    "FEED - SOLUCAO PARA VOCE.webp",
+  ],
+  "projeto-6": [
+    "FEED 1 - TRATAMENTO SUAVIZA.webp",
+    "FEED 2 - O LASER TRANSFORMA.webp",
+    "FEED 3 - RENOVE SUA PELE.webp",
+    "FEED 4 - NOSSAS CRIANÇAS.webp",
+    "FEED 5 - ALIMENTAÇÃO.webp",
+    "FEED 5 - TRANSFORMAÇÃO NOTAVEL.webp",
+    "FEED 6 - CIDADE.webp",
+    "FEED 7 - QUEDA DE CABELO.webp",
+    "FEED 9 - INTRADERMOTERAPIA.webp",
+    "FEED 10 - CUIDADOS DA PELE.webp",
+    "FEED 11 - DESCUBRA A ELEGANCIA.webp",
+    "FEED 12 - COLAGENO.webp",
+    "FEED 14 - APARENCIA MAIS JOVEM.webp",
+    "FEED 15 - BELEZA INCOMPARAVEL.webp",
+  ],
 };
 
-export function Portfolio() {
-  const content = useSiteContent();
-  const editableProjects = content.portfolio.projects;
-
-  const projectGalleries = useMemo(
-    () =>
-      editableProjects.map((item) => ({
-        ...item,
-        images:
-          (FALLBACK_FILES_BY_FOLDER[item.folder]?.length ?? 0) > 0
-            ? FALLBACK_FILES_BY_FOLDER[item.folder].map((fileName) =>
-                toImageUrl(item.folder, fileName)
-              )
-                .map((url) => url.replace(/\.(png|jpe?g)$/i, ".webp"))
-            : [
-                `/images/portfolio/${item.folder}/1.webp`,
-                `/images/portfolio/${item.folder}/2.webp`,
-                `/images/portfolio/${item.folder}/3.webp`,
-                `/images/portfolio/${item.folder}/4.webp`,
-                `/images/portfolio/${item.folder}/5.webp`,
-                `/images/portfolio/${item.folder}/6.webp`,
-              ],
-      })),
-    [editableProjects]
-  );
-
-  const [activeProjectIndex, setActiveProjectIndex] = useState<number | null>(null);
-  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
-  const [folderImages, setFolderImages] = useState<Record<string, string[]>>({});
-  const [coverImages, setCoverImages] = useState<string[]>(
-    projectGalleries.map((project) => project.images[0])
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadImagesFromFolders = async () => {
-      const folders = [...new Set(projectGalleries.map((project) => project.folder))];
-
-      const entries = await Promise.all(
-        folders.map(async (folder) => {
-          try {
-            const response = await fetch(`/api/portfolio-images/${folder}`, { cache: "no-store" });
-            const data = (await response.json()) as { images?: string[] };
-            return [folder, data.images ?? []] as const;
-          } catch {
-            return [folder, []] as const;
-          }
-        })
-      );
-
-      if (!cancelled) {
-        setFolderImages(Object.fromEntries(entries));
-      }
-    };
-
-    loadImagesFromFolders();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [projectGalleries]);
-
-  const galleriesWithRealImages = useMemo(
-    () =>
-      projectGalleries.map((project) => ({
-        ...project,
-        images:
-          folderImages[project.folder] && folderImages[project.folder].length > 0
-            ? folderImages[project.folder]
-            : project.images,
-      })),
-    [projectGalleries, folderImages]
-  );
-
-  useEffect(() => {
-    setCoverImages(
-      galleriesWithRealImages.map((project) => {
-        const randomIndex = Math.floor(Math.random() * project.images.length);
-        return project.images[randomIndex];
-      })
+function getProjectImages(folder: string): string[] {
+  const files = PROJECT_FILES[folder];
+  if (files) {
+    return files.map(
+      (f) => `/images/portfolio/${folder}/${encodeURIComponent(f)}`
     );
-  }, [galleriesWithRealImages]);
+  }
+  return Array.from(
+    { length: 6 },
+    (_, i) => `/images/portfolio/${folder}/${i + 1}.webp`
+  );
+}
 
-  const activeProject =
-    activeProjectIndex !== null ? galleriesWithRealImages[activeProjectIndex] : null;
+export function Portfolio() {
+  const [activeProject, setActiveProject] = useState<number | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
-  const activeProjectImages = activeProject?.images ?? [];
+  /* Main carousel */
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "center",
+    loop: true,
+    skipSnaps: false,
+    slidesToScroll: 1,
+  });
 
-  const goToNextProject = () => {
-    if (activeProjectIndex === null) return;
-    setActiveImageIndex(null);
-    setActiveProjectIndex((activeProjectIndex + 1) % galleriesWithRealImages.length);
-  };
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
-  const goToNextImage = () => {
-    if (activeImageIndex === null || activeProjectImages.length === 0) return;
-    setActiveImageIndex((activeImageIndex + 1) % activeProjectImages.length);
-  };
+  /* Modal carousel for project images */
+  const [modalEmblaRef, modalEmblaApi] = useEmblaCarousel({
+    align: "center",
+    loop: true,
+  });
 
-  const goToPreviousImage = () => {
-    if (activeImageIndex === null || activeProjectImages.length === 0) return;
-    setActiveImageIndex((activeImageIndex - 1 + activeProjectImages.length) % activeProjectImages.length);
-  };
+  const modalPrev = useCallback(() => modalEmblaApi?.scrollPrev(), [modalEmblaApi]);
+  const modalNext = useCallback(() => modalEmblaApi?.scrollNext(), [modalEmblaApi]);
+
+  const projects = PORTFOLIO_PROJECTS.map((p) => ({
+    ...p,
+    images: getProjectImages(p.folder),
+  }));
+
+  const currentProject = activeProject !== null ? projects[activeProject] : null;
+  const currentImages = currentProject?.images ?? [];
 
   return (
-    <section id="portfolio" className="relative py-24 lg:py-32 gradient-section overflow-hidden">
-      <FloatingIconsSparse variant={2} />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <AnimatedSection className="text-center mb-16">
-          <p className="text-sm uppercase tracking-widest text-cognac mb-4 font-poppins">
+    <section id="portfolio" className="relative section-padding gradient-section">
+      <div className="section-container">
+        <AnimatedSection className="text-center mb-12 lg:mb-16">
+          <p className="text-xs uppercase tracking-[0.25em] text-cognac mb-4 font-poppins font-medium">
             Portfólio
           </p>
-          <h2 className="text-bone leading-[0.95]">
-            <span className="block font-tusker text-3xl sm:text-4xl lg:text-5xl uppercase tracking-wide">{content.portfolio.titleTop}</span>
-            <span className="block font-tusker text-3xl sm:text-4xl lg:text-5xl uppercase tracking-wide mt-1">{content.portfolio.titleBottom}</span>
+          <h2 className="font-tusker text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-bone leading-[0.9]">
+            Trabalhos que{" "}
+            <span className="text-gradient">falam por si</span>
           </h2>
-          <p className="mt-6 text-lg text-bone/50 max-w-2xl mx-auto font-poppins font-light">
-            {content.portfolio.description}
+          <p className="mt-6 text-base sm:text-lg text-bone/40 max-w-2xl mx-auto font-poppins font-light">
+            Uma seleção dos projetos que geraram resultados reais para os clientes.
           </p>
         </AnimatedSection>
 
-        <HummingNote noteId="portfolio-open" fallbackText={"clique no projeto\npara abrir o case"} />
-        <HummingNote noteId="portfolio-behance" fallbackText={"abra no behance\npara ver tudo"} />
+        {/* Carousel */}
+        <AnimatedSection direction="scale">
+          <div className="relative">
+            {/* Embla container */}
+            <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
+              <div className="flex gap-4 lg:gap-6">
+                {projects.map((item, index) => (
+                  <div
+                    key={item.title}
+                    className="flex-[0_0_85%] sm:flex-[0_0_60%] lg:flex-[0_0_40%] min-w-0"
+                  >
+                    <motion.button
+                      type="button"
+                      onClick={() => setActiveProject(index)}
+                      className="group relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-border hover:border-cognac/30 transition-all duration-500 cursor-pointer"
+                      whileHover={shouldReduceMotion ? {} : { y: -4, scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    >
+                      <img
+                        src={item.images[0]}
+                        alt={`Capa — ${item.title}`}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
+                      />
 
-        {/* Portfolio grid */}
-        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {galleriesWithRealImages.map((item, index) => (
-            <StaggerItem key={item.title}>
-              <button
-                type="button"
-                onClick={() => setActiveProjectIndex(index)}
-                className="group hover-lift-soft relative w-full text-left aspect-[4/5] rounded-xl overflow-hidden border border-border hover:border-cognac/40 transition-all duration-500 cursor-pointer"
-              >
-                <img
-                  src={coverImages[index]}
-                  alt={`Capa do projeto ${item.title}`}
-                  className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700"
-                  style={{ transform: "scale(1.06)" }}
-                  loading="lazy"
-                  decoding="async"
-                  onLoad={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.removeProperty("display");
-                    target.parentElement
-                      ?.querySelector<HTMLDivElement>(".cover-placeholder")
-                      ?.style.setProperty("display", "none");
-                  }}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = "none";
-                    target.parentElement
-                      ?.querySelector<HTMLDivElement>(".cover-placeholder")
-                      ?.style.setProperty("display", "flex");
-                  }}
-                />
-                <div
-                  className="cover-placeholder absolute inset-0 hidden flex-col items-center justify-center gap-3"
-                  style={{
-                    background: `linear-gradient(${135 + index * 30}deg, #14213D ${10 + index * 5}%, #0F0F11 ${60 + index * 5}%, #14213D 100%)`,
-                  }}
-                >
-                  <ImageIcon className="h-12 w-12 text-bone/30" strokeWidth={1} />
-                  <p className="text-xs text-bone/30">Imagem de capa</p>
-                </div>
+                      {/* Fallback */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-navy to-obsidian flex items-center justify-center -z-10">
+                        <ImageIcon className="h-12 w-12 text-bone/10" strokeWidth={1} />
+                      </div>
 
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      {/* Bottom overlay always visible */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C]/80 via-[#0A0A0C]/20 to-transparent" />
 
-                {/* Content overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                  <Badge className="mb-2 text-[10px]">{item.category}</Badge>
-                  <h3 className="text-[13px] sm:text-[14px] leading-[0.95] font-poppins font-bold uppercase text-bone">
-                    {item.title}
-                  </h3>
-                </div>
+                      {/* Info */}
+                      <div className="absolute inset-x-0 bottom-0 p-5">
+                        <Badge className="mb-2 text-[10px] bg-cognac/20 text-cognac border-cognac/30">
+                          {item.category}
+                        </Badge>
+                        <h3 className="text-sm font-poppins font-bold uppercase text-bone tracking-wide">
+                          {item.title}
+                        </h3>
+                        <p className="text-[11px] text-bone/40 font-poppins mt-1">
+                          {item.images.length} peças • Clique para ver
+                        </p>
+                      </div>
 
-                {/* Top-right indicator */}
-                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-cognac/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <ExternalLink className="h-4 w-4 text-cognac" />
-                </div>
-              </button>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+                      {/* Corner icon */}
+                      <div className="absolute top-4 right-4 w-9 h-9 rounded-full glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-75 group-hover:scale-100">
+                        <ExternalLink className="h-4 w-4 text-cognac" />
+                      </div>
+                    </motion.button>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* CTA */}
-        <AnimatedSection className="text-center mt-12">
-          <Button size="lg" variant="outline" asChild>
-            <a
-              href={SOCIAL.behance}
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* Nav arrows */}
+            <button
+              type="button"
+              onClick={scrollPrev}
+              className="absolute left-2 lg:-left-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full glass flex items-center justify-center border border-border/50 hover:border-cognac/30 transition-colors"
+              aria-label="Projeto anterior"
             >
+              <ChevronLeft className="h-5 w-5 text-bone/60" />
+            </button>
+            <button
+              type="button"
+              onClick={scrollNext}
+              className="absolute right-2 lg:-right-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full glass flex items-center justify-center border border-border/50 hover:border-cognac/30 transition-colors"
+              aria-label="Próximo projeto"
+            >
+              <ChevronRight className="h-5 w-5 text-bone/60" />
+            </button>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection className="text-center mt-12 lg:mt-16">
+          <Button size="lg" variant="outline" className="rounded-full group" asChild>
+            <a href={SOCIAL.behance} target="_blank" rel="noopener noreferrer">
               Ver Portfólio Completo no Behance
-              <ExternalLink className="ml-2 h-4 w-4" />
+              <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
             </a>
           </Button>
         </AnimatedSection>
       </div>
 
-      {/* Behance-style popup viewer */}
-      {activeProject && (
-        <div
-          className="fixed inset-0 z-[80] bg-black/55 backdrop-blur-md p-4 sm:p-6 lg:p-10"
-          onClick={() => {
-            setActiveImageIndex(null);
-            setActiveProjectIndex(null);
-          }}
-        >
-          <div
-            className="relative mx-auto mt-2 sm:mt-6 w-full max-w-6xl max-h-[88vh] rounded-2xl border border-border bg-obsidian/95 overflow-hidden shadow-2xl shadow-black/50"
-            onClick={(e) => e.stopPropagation()}
+      {/* Project gallery modal — Behance-style with blurred background */}
+      <AnimatePresence>
+        {currentProject && (
+          <motion.div
+            className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-xl"
+            onClick={() => {
+              setLightboxIndex(null);
+              setActiveProject(null);
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <div className="flex items-center justify-between border-b border-border px-4 sm:px-6 py-4">
-              <div>
-                <p className="text-xs uppercase tracking-widest text-cognac font-poppins">Projeto aberto</p>
-                <h3 className="font-poppins font-bold uppercase text-bone text-xl sm:text-2xl">
-                  {activeProject.title}
-                </h3>
-                <p className="text-bone/55 font-poppins text-sm">{activeProject.category}</p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={goToNextProject}>
-                  Próximo
-                  <ChevronRight className="ml-1 h-4 w-4" />
-                </Button>
-                <Button type="button" variant="outline" size="icon" onClick={() => setActiveProjectIndex(null)}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="max-h-[calc(88vh-86px)] overflow-y-auto p-4 sm:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {activeProject.images.map((image, imageIndex) => (
-                  <button
-                    key={image}
-                    type="button"
-                    onClick={() => setActiveImageIndex(imageIndex)}
-                    className="relative w-full aspect-[4/5] rounded-xl overflow-hidden border border-border cursor-zoom-in"
-                  >
-                    <img
-                      src={image}
-                      alt={`${activeProject.title} imagem ${imageIndex + 1}`}
-                      className="absolute inset-0 w-full h-full object-contain bg-obsidian p-1"
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = "none";
-                        target.parentElement
-                          ?.querySelector<HTMLDivElement>(".gallery-placeholder")
-                          ?.style.setProperty("display", "flex");
-                      }}
-                    />
-                    <div
-                      className="gallery-placeholder absolute inset-0 hidden items-center justify-center"
-                      style={{
-                        background: `linear-gradient(${125 + imageIndex * 8}deg, #14213D 0%, #0F0F11 70%, #14213D 100%)`,
-                      }}
-                    >
-                      <ImageIcon className="h-9 w-9 text-bone/30" strokeWidth={1} />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {activeImageIndex !== null && activeProjectImages.length > 0 && (
-            <div
-              className="fixed inset-0 z-[90] bg-black/85 backdrop-blur-md p-4 sm:p-6"
-              onClick={() => setActiveImageIndex(null)}
+            <motion.div
+              className="relative mx-auto mt-4 sm:mt-8 w-[95%] max-w-5xl max-h-[90vh] rounded-2xl border border-border/30 bg-[#0A0A0C]/95 backdrop-blur-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.92, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 30 }}
+              transition={{ duration: 0.35, ease: [0.22, 0.68, 0.35, 1] }}
             >
-              <div
-                className="relative mx-auto flex h-full w-full max-w-6xl items-center justify-center"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <img
-                  src={activeProjectImages[activeImageIndex]}
-                  alt={`${activeProject.title} ampliada ${activeImageIndex + 1}`}
-                  className="max-h-[88vh] w-auto max-w-full rounded-xl border border-border object-contain bg-obsidian/90"
-                />
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="absolute left-2 sm:left-6"
-                  onClick={goToPreviousImage}
-                >
-                  <ChevronRight className="h-5 w-5 rotate-180" />
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="absolute right-2 sm:right-6"
-                  onClick={goToNextImage}
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="absolute top-2 right-2 sm:top-4 sm:right-4"
-                  onClick={() => setActiveImageIndex(null)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-border/30 px-5 sm:px-7 py-4">
+                <div>
+                  <Badge className="mb-1.5 text-[10px] bg-cognac/20 text-cognac border-cognac/30">
+                    {currentProject.category}
+                  </Badge>
+                  <h3 className="font-poppins font-bold uppercase text-bone text-lg tracking-wide">
+                    {currentProject.title}
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-bone/30 font-poppins">
+                    {currentImages.length} peças
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={() => setActiveProject(null)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+
+              {/* Carousel of project images */}
+              <div className="relative">
+                <div className="overflow-hidden" ref={modalEmblaRef}>
+                  <div className="flex">
+                    {currentImages.map((image, i) => (
+                      <div key={image} className="flex-[0_0_100%] min-w-0">
+                        <div className="flex items-center justify-center p-4 sm:p-8 max-h-[calc(90vh-80px)]">
+                          <img
+                            src={image}
+                            alt={`${currentProject.title} — ${i + 1}`}
+                            className="max-h-[70vh] w-auto max-w-full rounded-xl object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Modal nav arrows */}
+                {currentImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={modalPrev}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full glass flex items-center justify-center border border-border/40 hover:border-cognac/30 transition-colors"
+                    >
+                      <ChevronLeft className="h-5 w-5 text-bone/60" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={modalNext}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full glass flex items-center justify-center border border-border/40 hover:border-cognac/30 transition-colors"
+                    >
+                      <ChevronRight className="h-5 w-5 text-bone/60" />
+                    </button>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

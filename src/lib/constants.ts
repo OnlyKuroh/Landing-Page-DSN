@@ -23,6 +23,14 @@ export const WHATSAPP = {
     const message = `Olá, Athila! Meu nome é ${name} e tenho interesse em ${projectType}. Vim pelo seu site e gostaria de conversar sobre meu projeto.`;
     return `https://wa.me/${this.number}?text=${encodeURIComponent(message)}`;
   },
+  mentoriaLink() {
+    const message = "Olá, Athila! Tenho interesse na Mentoria de Design Estratégico. Vim pelo seu site.";
+    return `https://wa.me/${this.number}?text=${encodeURIComponent(message)}`;
+  },
+  aiPortraitsLink() {
+    const message = "Olá, Athila! Tenho interesse nos Ensaios de Inteligência Artificial. Vim pelo seu site.";
+    return `https://wa.me/${this.number}?text=${encodeURIComponent(message)}`;
+  },
 } as const;
 
 export const SOCIAL = {
@@ -33,75 +41,82 @@ export const SOCIAL = {
 
 export const NAV_LINKS = [
   { label: "Início", href: "#inicio" },
-  { label: "Expertise", href: "#expertise" },
   { label: "Portfólio", href: "#portfolio" },
-  { label: "Ensaios IA", href: "#ensaios-ia" },
   { label: "Sobre", href: "#sobre" },
-  { label: "Mentoria", href: "#mentoria" },
+  { label: "Ensaios IA", href: "#ensaios-ia" },
   { label: "Contato", href: "#contato" },
 ] as const;
 
 export const STATS = [
-  { value: 132, suffix: "+", label: "Clientes Atendidos" },
-  { value: 6, suffix: "+", label: "Anos de Experiência" },
-  { value: 15, suffix: "+", label: "Segmentos Atendidos" },
+  { value: "132+", label: "Clientes" },
+  { value: "6+", label: "Anos" },
+  { value: "15+", label: "Segmentos" },
 ] as const;
 
 export const SERVICES = [
   {
     icon: "Palette" as const,
-    title: "Artes Estáticas de Alto Impacto",
+    title: "Artes de Alto Impacto",
     description:
-      "Feed, stories, banners e material impresso que capturam atenção e geram resultados reais para o seu negócio.",
+      "Feed, stories, banners e material impresso que capturam atenção e geram resultados reais.",
   },
   {
     icon: "Gem" as const,
     title: "Branding & Identidade Visual",
     description:
-      "Logotipos, brandbooks e sistemas visuais que posicionam sua marca com autoridade e diferenciação no mercado.",
+      "Logotipos, brandbooks e sistemas visuais que posicionam sua marca com autoridade.",
   },
   {
     icon: "Target" as const,
     title: "Criativos para Anúncios",
     description:
-      "Artes otimizadas para Meta Ads e Google Ads, focadas em CTR e conversão. Design que performa.",
+      "Artes otimizadas para Meta Ads e Google Ads, focadas em CTR e conversão.",
   },
   {
     icon: "Brain" as const,
     title: "Estratégia Visual + IA",
     description:
-      "Planejamento criativo com integração de ferramentas de inteligência artificial no fluxo de design.",
+      "Planejamento criativo com integração de inteligência artificial no fluxo de design.",
   },
 ] as const;
 
-export const TESTIMONIALS = [
+export const PORTFOLIO_PROJECTS = [
   {
-    name: "Carlos Mendes",
-    role: "CEO, Tech Solutions",
-    text: "O Athila transformou completamente a identidade visual da nossa empresa. As artes que ele cria não são apenas bonitas — elas vendem. Nosso engajamento nas redes aumentou 340% em 3 meses.",
+    title: "Campanha de Lançamento",
+    category: "Criativos para Ads",
+    folder: "projeto-1",
   },
   {
-    name: "Ana Beatriz",
-    role: "Diretora de Marketing, Estúdio Criativo",
-    text: "Trabalhar com o Athila é ter a certeza de que cada pixel tem um propósito estratégico. Ele não entrega design, entrega resultado. Recomendo de olhos fechados.",
+    title: "Identidade Visual Completa",
+    category: "Branding",
+    folder: "projeto-2",
   },
   {
-    name: "Roberto Silva",
-    role: "Fundador, RS Educação",
-    text: "Precisávamos de materiais educacionais de alto nível e o Athila superou todas as expectativas. Profissionalismo, pontualidade e uma visão criativa impressionante.",
+    title: "Material Educacional",
+    category: "Design Editorial",
+    folder: "projeto-3",
   },
   {
-    name: "Juliana Costa",
-    role: "Social Media Manager",
-    text: "Os criativos do Athila para nossas campanhas de anúncios reduziram nosso CPL em 60%. Ele entende de design E de performance. É raro encontrar essa combinação.",
+    title: "Campanha Solidária",
+    category: "Artes Estáticas",
+    folder: "projeto-4",
+  },
+  {
+    title: "Redesign de Marca",
+    category: "Branding",
+    folder: "projeto-5",
+  },
+  {
+    title: "Posts para Redes Sociais",
+    category: "Social Media",
+    folder: "projeto-6",
   },
 ] as const;
 
-export const PORTFOLIO_ITEMS = [
-  { title: "Campanha de Lançamento", category: "Criativos para Ads" },
-  { title: "Identidade Visual Completa", category: "Branding" },
-  { title: "Material Educacional", category: "Design Editorial" },
-  { title: "Campanha Solidária", category: "Artes Estáticas" },
-  { title: "Redesign de Marca", category: "Branding" },
-  { title: "Posts para Redes Sociais", category: "Social Media" },
-] as const;
+export const PROJECT_TYPE_LABELS: Record<string, string> = {
+  "brand-identity": "Branding & Identidade Visual",
+  "social-ads": "Criativos para Anúncios / Social Media",
+  "educational": "Material Educacional / Editorial",
+  "ai-portraits": "Ensaio de Inteligência Artificial",
+  "other": "Outro projeto",
+};

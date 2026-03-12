@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Desktop_Commander__list_directory",
+      "mcp__Desktop_Commander__start_search",
+      "mcp__Desktop_Commander__get_more_search_results",
+      "mcp__Desktop_Commander__read_file",
+      "mcp__Desktop_Commander__get_file_info",
+      "mcp__Desktop_Commander__start_process",
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Desktop_Commander__read_process_output",
+      "Bash(npx get-shit-done-cc@latest)"
+    ]
+  }
+}

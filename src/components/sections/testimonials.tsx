@@ -1,124 +1,124 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useState } from "react";
+import { Quote } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { AnimatedSection } from "@/components/ui/animated-section";
-import { FloatingIconsSparse } from "@/components/ui/floating-icons";
-import { HummingNote } from "@/components/ui/humming-note";
-import { TESTIMONIALS } from "@/lib/constants";
+
+const TESTIMONIALS = [
+  {
+    name: "Marina S.",
+    role: "CEO, Boutique de Moda",
+    text: "O Athila transformou completamente a identidade visual da minha marca. As vendas aumentaram 40% no primeiro mês após o rebranding.",
+  },
+  {
+    name: "Rafael M.",
+    role: "Advogado Tributarista",
+    text: "Profissional excepcional. Entregou um trabalho de altíssima qualidade que superou minhas expectativas em todos os aspectos.",
+  },
+  {
+    name: "Camila F.",
+    role: "Dermatologista",
+    text: "O design das redes sociais ficou incrível. Meus pacientes sempre elogiam a qualidade visual do meu perfil profissional.",
+  },
+  {
+    name: "Lucas P.",
+    role: "Fundador, Tech Startup",
+    text: "A mentoria mudou minha visão sobre design estratégico. Aprendi a usar o visual como ferramenta de vendas real.",
+  },
+  {
+    name: "Juliana R.",
+    role: "Corretora de Seguros",
+    text: "Contratei para social media e nunca mais troquei. Qualidade impecável, entregas no prazo e criatividade sem igual.",
+  },
+];
 
 export function Testimonials() {
   const [current, setCurrent] = useState(0);
-
-  const prev = useCallback(() => {
-    setCurrent((c) => (c === 0 ? TESTIMONIALS.length - 1 : c - 1));
-  }, []);
+  const shouldReduceMotion = useReducedMotion();
 
   const next = useCallback(() => {
-    setCurrent((c) => (c === TESTIMONIALS.length - 1 ? 0 : c + 1));
+    setCurrent((c) => (c + 1) % TESTIMONIALS.length);
   }, []);
 
-  // Auto-advance every 6s
+  const prev = useCallback(() => {
+    setCurrent((c) => (c - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+  }, []);
+
+  /* Auto-advance */
   useEffect(() => {
-    const timer = setInterval(next, 6000);
+    const timer = setInterval(next, 5000);
     return () => clearInterval(timer);
   }, [next]);
 
   return (
-    <section className="relative py-24 lg:py-32 gradient-section overflow-hidden">
-      <FloatingIconsSparse variant={4} />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <AnimatedSection className="text-center mb-16">
-          <p className="text-sm uppercase tracking-widest text-cognac mb-4 font-poppins">
+    <section id="depoimentos" className="relative section-padding gradient-section">
+      <div className="section-container">
+        <AnimatedSection className="text-center mb-12 lg:mb-16">
+          <p className="text-xs uppercase tracking-[0.25em] text-cognac mb-4 font-poppins font-medium">
             Depoimentos
           </p>
-          <h2 className="text-bone leading-[0.95]">
-            <span className="block font-tusker text-3xl sm:text-4xl lg:text-5xl uppercase tracking-wide">O que dizem sobre</span>
-            <span className="block font-tusker text-3xl sm:text-4xl lg:text-5xl uppercase tracking-wide mt-1">meu trabalho</span>
+          <h2 className="font-tusker text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-bone leading-[0.9]">
+            O que dizem{" "}
+            <span className="text-gradient">meus clientes</span>
           </h2>
         </AnimatedSection>
 
-        <AnimatedSection>
-          <div className="relative max-w-3xl mx-auto">
-            {/* Carousel */}
-            <Card className="bg-navy/40 border-border overflow-hidden">
-              <CardContent className="p-8 sm:p-12">
-                <Quote
-                  className="h-10 w-10 text-cognac/30 mb-6"
-                  strokeWidth={1}
-                  fill="currentColor"
-                />
+        {/* Testimonial carousel */}
+        <div className="max-w-3xl mx-auto">
+          <AnimatedSection>
+            <div className="glass-card rounded-2xl p-8 sm:p-12 relative overflow-hidden min-h-[260px] sm:min-h-[220px] flex flex-col justify-center">
+              {/* Decorative quote */}
+              <Quote className="absolute top-6 left-6 h-10 w-10 text-cognac/10" strokeWidth={1} />
 
-                <div className="min-h-[120px] flex items-center">
-                  <blockquote className="text-lg sm:text-xl text-bone/80 leading-relaxed italic">
-                    &ldquo;{TESTIMONIALS[current].text}&rdquo;
-                  </blockquote>
-                </div>
+              {/* Decorative blob */}
+              <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-cognac/5 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="mt-8 flex items-center gap-4">
-                  {/* Avatar placeholder */}
-                  <div className="h-12 w-12 rounded-full bg-cognac/20 flex items-center justify-center border border-cognac/30">
-                    <span className="text-sm font-bold text-cognac">
-                      {TESTIMONIALS[current].name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-bone">
-                      {TESTIMONIALS[current].name}
+              <div className="relative">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={current}
+                    initial={shouldReduceMotion ? {} : { opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? {} : { opacity: 0, y: -15 }}
+                    transition={{ duration: 0.4, ease: [0.22, 0.68, 0.35, 1] }}
+                    className="text-center space-y-6"
+                  >
+                    <p className="text-base sm:text-lg text-bone/70 font-poppins font-light leading-relaxed italic">
+                      &ldquo;{TESTIMONIALS[current].text}&rdquo;
                     </p>
-                    <p className="text-sm text-bone/50">
-                      {TESTIMONIALS[current].role}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Controls */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={prev}
-                aria-label="Depoimento anterior"
-              >
-                <ChevronLeft className="h-5 w-5 text-bone" />
-              </Button>
-
-              {/* Dots */}
-              <div className="flex gap-2">
-                {TESTIMONIALS.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrent(i)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      i === current
-                        ? "w-8 bg-cognac"
-                        : "w-2 bg-bone/20 hover:bg-bone/40"
-                    }`}
-                    aria-label={`Ir para depoimento ${i + 1}`}
-                  />
-                ))}
+                    <div>
+                      <p className="font-poppins font-bold text-bone text-sm">
+                        {TESTIMONIALS[current].name}
+                      </p>
+                      <p className="text-xs text-bone/35 font-poppins">
+                        {TESTIMONIALS[current].role}
+                      </p>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={next}
-                aria-label="Próximo depoimento"
-              >
-                <ChevronRight className="h-5 w-5 text-bone" />
-              </Button>
             </div>
-          </div>
-        </AnimatedSection>
+          </AnimatedSection>
 
-        <HummingNote noteId="testimonials-main" fallbackText={"resultados\nreais"} />
+          {/* Navigation dots */}
+          <div className="flex items-center justify-center gap-3 mt-8">
+            {TESTIMONIALS.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setCurrent(i)}
+                className={`transition-all duration-300 rounded-full ${
+                  i === current
+                    ? "w-8 h-2 bg-cognac"
+                    : "w-2 h-2 bg-bone/15 hover:bg-bone/30"
+                }`}
+                aria-label={`Depoimento ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
